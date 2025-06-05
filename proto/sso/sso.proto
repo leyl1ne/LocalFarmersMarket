@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "tuzov.sso.v1; ssov1";
+
+// Auth is sevice for managing permissions and roles. 
+service Auth {
+    // Register register a new user 
+    rpc Register (RegisterRequest) returns (RegisterResponse);
+    // Login logs in a user and returns an auth token 
+    rpc Login (LoginRequest) returns (LoginResponse);
+
+}
+
+
+message RegisterRequest{
+    string email = 1; //Email of the user to register. 
+    string password = 2; // Password of the user to register. 
+    string username = 3; 
+    UserRole role = 4; // Type of account (buyer or farmer)
+    string phone = 5; // contact number in format +7xxx
+
+    //For farmers - name of farm
+    optional string farm_name = 6;
+
+    optional Address address = 7;
+}
+
+message RegisterResponse{
+    int64 user_id = 1; //User ID of the registered user. 
+    string username = 2;
+    UserRole role = 3;
+}
+
+message LoginRequest {
+    string email = 1; 
+    string password = 2; 
+    int32 app_id = 3; // ID of the app to login to.
+}
+
+message LoginResponse{
+    string token = 1; //Auth token of the logged in user
+    UserRole role = 2;
+}
+
+enum UserRole{
+    CUSTOMER = 0; 
+    FARMER = 1;
+    MODERATOR = 2;
+}
+
+message Address {
+    string city = 1;
+    string street = 2;
+    string building = 3;
+    // Coordinates for map
+    double latitude = 4;
+    double longitude = 5;
+}
